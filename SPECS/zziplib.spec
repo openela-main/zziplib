@@ -1,7 +1,7 @@
 Summary: Lightweight library to easily extract data from zip files
 Name: zziplib
 Version: 0.13.68
-Release: 9%{?dist}
+Release: 13%{?dist}
 License: LGPLv2+ or MPLv1.1
 Group: Applications/Archiving
 URL: http://zziplib.sourceforge.net/
@@ -26,6 +26,7 @@ Patch10: CVE-2018-17828.patch
 Patch11: CVE-2018-17828-singlez.patch
 
 Patch12: CVE-2020-18442.patch
+Patch13: CVE-2020-18770.patch
 
 BuildRequires: perl-interpreter
 BuildRequires: python3-devel
@@ -92,6 +93,7 @@ zziplib library.
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
+%patch13 -p1
 
 pathfix.py -i %{__python3} -pn docs
 
@@ -101,7 +103,9 @@ export CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing"
     --disable-static \
     --enable-sdl \
     --enable-frame-pointer \
-    --enable-builddir=_builddir
+    --enable-builddir=_builddir \
+    ac_cv_path_PYTHON=%__python3
+
 # Remove rpath on 64bit archs
 sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' */libtool
 sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' */libtool
@@ -143,6 +147,23 @@ make install DESTDIR=%{buildroot}
 %{_mandir}/man3/*
 
 %changelog
+* Wed Feb 28 2024 Jakub Martisko <jamartis@redhat.com> - 0.13.68-13
+- Fix CVE-2020-18770
+  Previous patch contained segfault bug
+  Resolves: RHEL-14966
+
+* Tue Feb 06 2024 Jakub Martisko <jamartis@redhat.com> - 0.13.68-12
+- Add the gating tests from the 8.8.0 branch
+  Resolves: RHEL-24429
+
+* Sat Jan 27 2024 Jakub Martisko <jamartis@redhat.com> - 0.13.68-11
+- Use %__python3 macro during the config phase (used for doc generation)
+  Resolves: RHEL-22880
+
+* Wed Jan 24 2024 Jakub Martisko <jamartis@redhat.com> - 0.13.68-10
+- Fix CVE-2020-18770
+  Resolves: RHEL-14966
+
 * Mon Aug 02 2021 Jakub Martisko <jamartis@redhat.com> - 0.13.68-9
 - Fix CVE-2020-18442
 - Resolves: CVE-2020-18442
