@@ -1,7 +1,7 @@
 Summary: Lightweight library to easily extract data from zip files
 Name: zziplib
 Version: 0.13.71
-Release: 11%{?dist}
+Release: 12%{?dist}
 License: LGPLv2+ or MPLv1.1
 URL: http://zziplib.sourceforge.net/
 #Source: https://github.com/gdraheim/zziplib/archive/v%{version}.tar.gz
@@ -16,6 +16,8 @@ Source2: options.py
 
 Patch1: CVE-2020-18442.patch 
 Patch2: CVE-2020-18770.patch
+Patch3: CVE-2018-17828-singlez.patch
+Patch4: CVE-2018-17828.patch
 Patch100: multilib-32.patch
 Patch101: multilib-64.patch
 
@@ -76,6 +78,8 @@ cp %{SOURCE2} docs/zzipdoc/
 
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
+%patch4 -p1
 
 
 %build
@@ -124,6 +128,10 @@ popd
 %{_mandir}/man3/*
 
 %changelog
+* Thu Jun 12 2025 Jakub Martisko <jamartis@redhat.com> - 0.13.71-12
+- Fix a directory traversal issue in unzip-mem
+  Resolves: RHEL-6266
+
 * Wed Feb 28 2024 Jakub Martisko <jamartis@redhat.com> - 0.13.71-11
 - Fix CVE-2020-18770
   Previous patch was causing segfault
