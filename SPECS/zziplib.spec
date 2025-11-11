@@ -5,10 +5,12 @@
 Summary: Lightweight library to easily extract data from zip files
 Name: zziplib
 Version: 0.13.78
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: LGPL-2.0-or-later OR MPL-1.1
 URL: http://zziplib.sourceforge.net/
 Source: https://github.com/gdraheim/zziplib/archive/v%{version}.tar.gz
+
+Patch1: CVE-2018-17828-singlez.patch
 
 BuildRequires: make
 BuildRequires: gcc
@@ -62,8 +64,10 @@ zziplib library.
 %prep
 %setup -q
 
+%patch 1 -p1 
+
 %build
-%cmake -B "%{_vpath_builddir}"
+%cmake -B "%{_vpath_builddir}" -DZZIP_TESTCVE=OFF
 
 %make_build -C "%{_vpath_builddir}"
 
@@ -91,6 +95,11 @@ zziplib library.
 %{_mandir}/man3/*
 
 %changelog
+* Tue Jul 29 2025 Jakub Martisko <jamartis@redhat.com> - 0.13.78-2
+- Fix directory traversal in unzip binary
+- Disable the CVE tests during the check phase - the reproducers for these are downloaded from the github
+- Resolves: RHEL-105822
+
 * Fri Jan 31 2025 Jakub Martisko <jamartis@redhat.com> - 0.13.78-1
 - Rebase to 0.13.78
 - Related: RHEL-45367
